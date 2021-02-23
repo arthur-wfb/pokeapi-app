@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PokeApp</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search">Search</string>
+    <string name="enter_pokemon_name">Enter pokemon name</string>
+    <string name="pokemon_name">Pokemon name</string>
+    <string name="_0">0</string>
+    <string name="weight">Weight:</string>
+    <string name="height">Height:</string>
+    <string name="pokemon_sprite">Pokemon sprite</string>
+    <string name="favourite_pokemon">favourite pokemon</string>
+    <string name="random">Random</string>
+    <string name="favourite_pokemons">Favourite pokemons</string>
+    <string name="abilities">Abilities:</string>
+</resources>
