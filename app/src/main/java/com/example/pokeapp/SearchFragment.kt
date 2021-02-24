@@ -15,6 +15,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pokeapp.databinding.FragmentPokemonDetailsBinding
+import com.example.pokeapp.databinding.FragmentSearchBinding
 import com.example.pokeapp.interfaces.OnPokemonClick
 import com.example.pokeapp.model.api.NetworkState
 import com.example.pokeapp.util.PokemonAdapter
@@ -27,9 +29,12 @@ class SearchFragment : Fragment(), OnPokemonClick {
 
     private lateinit var navController: NavController
     private val viewModel by inject<PokemonViewModel>()
+    private lateinit var binding: FragmentSearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = FragmentSearchBinding.inflate(layoutInflater)
 
         viewModel.fetchAllPokemons()
     }
@@ -39,38 +44,34 @@ class SearchFragment : Fragment(), OnPokemonClick {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.searchPokemonRV)
         val pokemonAdapter = PokemonAdapter(this)
-        val searchInput = view.findViewById<EditText>(R.id.searchInput)
-        val submitButton = view.findViewById<Button>(R.id.submit)
-        val progressBar = view.findViewById<ProgressBar>(R.id.searchProgressBar)
 
-        recyclerView.layoutManager = LinearLayoutManager(view.context)
-        recyclerView.adapter = pokemonAdapter
-        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+        binding.searchPokemonRV.layoutManager = LinearLayoutManager(view.context)
+        binding.searchPokemonRV.adapter = pokemonAdapter
+        binding.searchPokemonRV.addItemDecoration(DividerItemDecoration(binding.searchPokemonRV.context, DividerItemDecoration.VERTICAL))
 
-        submitButton.setOnClickListener {
-            pokemonAdapter.filterByText(searchInput.text.toString().toLowerCase(Locale.getDefault()))
+        binding.submit.setOnClickListener {
+            pokemonAdapter.filterByText(binding.searchInput.text.toString().toLowerCase(Locale.getDefault()))
         }
 
-        searchInput.addTextChangedListener {
-            pokemonAdapter.filterByText(searchInput.text.toString().toLowerCase(Locale.getDefault()))
+        binding.searchInput.addTextChangedListener {
+            pokemonAdapter.filterByText(binding.searchInput.text.toString().toLowerCase(Locale.getDefault()))
         }
 
         viewModel.allPokemonsResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             pokemonAdapter.submitValues(it)
-            pokemonAdapter.filterByText(searchInput.text.toString().toLowerCase(Locale.getDefault()))
+            pokemonAdapter.filterByText(binding.searchInput.text.toString().toLowerCase(Locale.getDefault()))
         })
 
         viewModel.networkState.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it) {
                 NetworkState.SUCCESS -> {
-                    progressBar.visibility = View.INVISIBLE
-                    recyclerView.visibility = View.VISIBLE
+                    binding.searchProgressBar.visibility = View.INVISIBLE
+                    binding.searchPokemonRV.visibility = View.VISIBLE
                 }
                 NetworkState.RUNNING -> {
-                    progressBar.visibility = View.VISIBLE
-                    recyclerView.visibility = View.INVISIBLE
+                    binding.searchProgressBar.visibility = View.VISIBLE
+                    binding.searchPokemonRV.visibility = View.INVISIBLE
                 }
             }
         })

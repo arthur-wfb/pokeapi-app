@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pokeapp.databinding.FragmentMainBinding
 import com.example.pokeapp.interfaces.OnPokemonClick
 import com.example.pokeapp.util.FavouritePokemonsAdapter
 import com.example.pokeapp.viewmodel.PokemonViewModel
@@ -22,12 +23,11 @@ class MainFragment : Fragment(), View.OnClickListener, OnPokemonClick {
 
     private lateinit var navController: NavController
     private val viewModel by inject<PokemonViewModel>()
-
-    private lateinit var progessBar: ProgressBar
+    private lateinit var binding: FragmentMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        binding = FragmentMainBinding.inflate(layoutInflater)
         viewModel.listenToFavouritePokemons()
     }
 
@@ -35,29 +35,26 @@ class MainFragment : Fragment(), View.OnClickListener, OnPokemonClick {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_main, container, false)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.favouritePokemonsRV)
         val pokemonAdapter = FavouritePokemonsAdapter(this)
-        progessBar = view.findViewById(R.id.favPokemonsProgressBar)
 
-        recyclerView.layoutManager = GridLayoutManager(view.context, 2)
-        recyclerView.adapter = pokemonAdapter
+        binding.favouritePokemonsRV.layoutManager = GridLayoutManager(binding.root.context, 2)
+        binding.favouritePokemonsRV.adapter = pokemonAdapter
 
         viewModel.favouritePokemons.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             pokemonAdapter.submitValues(it)
-            recyclerView.visibility = View.VISIBLE
-            progessBar.visibility = View.INVISIBLE
+            binding.favouritePokemonsRV.visibility = View.VISIBLE
+            binding.favPokemonsProgressBar.visibility = View.INVISIBLE
         })
 
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
 
-        view.findViewById<Button>(R.id.search_button).setOnClickListener(this)
-        view.findViewById<Button>(R.id.random_pokemon_button).setOnClickListener(this)
+        binding.searchButton.setOnClickListener(this)
+        binding.randomPokemonButton.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
